@@ -1,0 +1,27 @@
+#! /usr/bin/ruby
+require_relative '../src/tweeter'
+
+users_file = 'users.txt'
+tweets_file = 'tweets.txt'
+
+def kill(message)
+  puts message
+  exit
+end
+
+kill("Usage: tweeter USERS_FILE TWEETS_FILE") if ARGV.length == 1
+kill("Usage: tweeter USERS_FILE TWEETS_FILE") if ARGV.length > 2
+
+if ARGV.length == 2
+  users_file = ARGV[0]
+  tweets_file = ARGV[1]
+
+  kill ("Either USERS_FILE or TWEETS_FILE does not exist. Please make sure both files exist. (Default: ./users.txt and ./tweets.txt)") unless
+    File.exist?(users_file) and File.exist?(tweets_file)
+end
+
+begin
+  Tweeter.run(users_file, tweets_file)
+rescue
+  kill ("Invalid File Format. Please ensure both USERS_FILE and TWEETS_FILE are in the correct format.")
+end
