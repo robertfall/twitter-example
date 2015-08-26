@@ -2,6 +2,7 @@ require 'minitest/autorun'
 require_relative '../src/tweet_store'
 require_relative '../src/follower_map'
 require_relative '../src/follow'
+require_relative '../src/tweet'
 
 FOLLOWER_MAP = FollowerMap.from_list [
   Follow.new('Rob', 'Steve'),
@@ -10,7 +11,9 @@ FOLLOWER_MAP = FollowerMap.from_list [
   Follow.new('Joe', 'Rob'),
 ]
 
-Tweet = Struct.new(:broadcaster, :body)
+def tw(broadcaster, body)
+  Tweet.new broadcaster, body
+end
 
 describe TweetStore do
   describe '#new' do
@@ -22,30 +25,30 @@ describe TweetStore do
   describe '#add' do
     let (:store) {TweetStore.new(FOLLOWER_MAP)}
     it 'adds the tweet to all the followers of the sender' do
-      store.add(Tweet.new('Rob', 'Tweet'))
-      store.add(Tweet.new('Steve', 'Twoot'))
+      store.add(tw('Rob', 'Tweet'))
+      store.add(tw('Steve', 'Twoot'))
 
-      store.tweets_for('Steve').must_include 'Tweet'
-      store.tweets_for('Joe').must_include 'Tweet'
-      store.tweets_for('Joe').must_include 'Twoot'
+      store.tweets_for('Steve').must_include tw('Rob', 'Tweet')
+      store.tweets_for('Joe').must_include tw('Rob', 'Tweet')
+      store.tweets_for('Joe').must_include tw('Steve', 'Twoot')
     end
 
     it 'adds the tweet to the sender' do
-      store.add(Tweet.new('Rob', 'Tweet'))
-      store.add(Tweet.new('Steve', 'Twoot'))
+      store.add(tw('Rob', 'Tweet'))
+      store.add(tw('Steve', 'Twoot'))
 
-      store.tweets_for('Rob').must_include 'Tweet'
-      store.tweets_for('Steve').must_include 'Twoot'
+      store.tweets_for('Rob').must_include tw('Rob', 'Tweet')
+      store.tweets_for('Steve').must_include tw('Steve', 'Twoot')
     end
   end
 
   describe '#tweets_for' do
     let (:store) {TweetStore.new(FOLLOWER_MAP)}
     it 'returns all tweets for user in FIFO order' do
-      store.add(Tweet.new('Rob', 'Tweet'))
-      store.add(Tweet.new('Steve', 'Twoot'))
+      store.add(tw('Rob', 'Tweet'))
+      store.add(tw('Steve', 'Twoot'))
 
-      store.tweets_for('Steve').must_equal ['Tweet', 'Twoot']
+      store.tweets_for('Steve').must_equal [tw('Rob', 'Tweet'), tw('Steve', 'Twoot')]
     end
   end
 
@@ -53,13 +56,13 @@ describe TweetStore do
     let (:store) {TweetStore.new(FOLLOWER_MAP)}
 
     it 'returns all users with tweets in insertion order' do
-      store.add(Tweet.new('Rob', 'Tweet'))
-      store.add(Tweet.new('Steve', 'Twoot'))
+      store.add(tw('Rob', 'Tweet'))
+      store.add(tw('Steve', 'Twoot'))
 
       store.tweets_by_user.must_equal({
-        'Joe' => ['Tweet', 'Twoot'],
-        'Steve' => ['Tweet', 'Twoot'],
-        'Rob' => ['Tweet'],
+        'Joe' => [tw('Rob', 'Tweet'), tw('Steve', 'Twoot')],
+        'Steve' => [tw('Rob', 'Tweet'), tw('Steve', 'Twoot')],
+        'Rob' => [tw('Rob', 'Tweet')],
       })
     end
   end

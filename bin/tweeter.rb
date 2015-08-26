@@ -17,17 +17,17 @@ end
 store = TweetStore.new(map)
 
 IO.foreach('tweets.txt') do |line|
-  tweet = TweetLine.new(line)
-  next unless tweet.valid?
+  tweet_line = TweetLine.new(line)
+  next unless tweet_line.valid?
 
-  store.add(tweet)
+  store.add(tweet_line.tweet)
 end
 
 store.tweets_by_user.tap do |users|
   users.keys.sort.each do |user|
     puts "#{user}\n"
     users.fetch(user).each do |tweet|
-      puts "\t" + tweet
+      puts "\t" + tweet.to_s
     end
   end
 end

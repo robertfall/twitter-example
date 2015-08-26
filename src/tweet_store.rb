@@ -7,7 +7,7 @@ class TweetStore
   def add(tweet)
     (@map.followers_for(tweet.broadcaster) + [tweet.broadcaster]).each do |follower|
       tweets = @tweets_by_user.fetch(follower, [])
-      tweets << tweet.body
+      tweets << tweet
       @tweets_by_user[follower] = tweets
     end
   end

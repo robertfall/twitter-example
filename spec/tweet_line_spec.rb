@@ -64,4 +64,21 @@ describe TweetLine do
       end
     end
   end
+
+  describe '#tweet' do
+    describe 'with valid line' do
+      it 'returns a tweet object for the line' do
+        tweet = TweetLine.new(VALID_LINES.first)
+        tweet.tweet.must_equal Tweet.new('Rob', 'This is a tweet!')
+      end
+    end
+
+    describe 'with invalid line' do
+      it 'raises a TweetLineFormatError' do
+        proc {
+          TweetLine.new(INVALID_LINES.first).tweet
+        }.must_raise TweetLineFormatError
+      end
+    end
+  end
 end
