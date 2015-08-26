@@ -18,6 +18,12 @@ class FollowerMap
     @follows[follow.broadcaster] = followers
   end
 
+  def add_follows(follows)
+    follows.each do |follow| 
+      add_follow(follow)
+    end
+  end
+
   def broadcasters
     @follows.keys
   end

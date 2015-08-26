@@ -48,4 +48,19 @@ describe TweetStore do
       store.tweets_for('Steve').must_equal ['Tweet', 'Twoot']
     end
   end
+
+  describe '#tweets_by_user' do
+    let (:store) {TweetStore.new(FOLLOWER_MAP)}
+
+    it 'returns all users with tweets in insertion order' do
+      store.add(Tweet.new('Rob', 'Tweet'))
+      store.add(Tweet.new('Steve', 'Twoot'))
+
+      store.tweets_by_user.must_equal({
+        'Joe' => ['Tweet', 'Twoot'],
+        'Steve' => ['Tweet', 'Twoot'],
+        'Rob' => ['Tweet'],
+      })
+    end
+  end
 end
