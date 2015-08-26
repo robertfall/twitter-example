@@ -14,8 +14,7 @@ class UserLine
   def follows
     raise UserLineFormatError.new(@line) unless valid?
 
-    # TODO: Deal with case issues around 'follows'
-    subscriber, broadcasters = @line.split('follows').map(&:strip)
+    subscriber, broadcasters = @line.split(/follows/i).map(&:strip)
     broadcasters.split(',').map(&:strip).inject(Set.new) { |set, broadcaster|
       set.add Follow.new(broadcaster, subscriber)
     }.to_a
