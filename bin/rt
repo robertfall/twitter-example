@@ -1,0 +1,2 @@
+#!/Users/robert/.rbenv/shims/ruby -Itest -I.
+require'pathname';P=Pathname;ARGV.map{|a|p=P.new(a);next unless p.exist?;p.directory?? P.glob(p.join('**/*.rb')):p}.flatten.compact.uniq.each{|p|require p.expand_path}
