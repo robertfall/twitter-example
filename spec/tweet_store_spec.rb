@@ -20,6 +20,13 @@ describe TweetStore do
     it 'takes a FollowerMap' do
       TweetStore.new(FollowerMap.new)
     end
+
+    it 'creates empty tweet lists for every known user' do
+      store = TweetStore.new(FOLLOWER_MAP)
+      store.tweets_by_user.key?('Rob').must_equal true
+      store.tweets_by_user.key?('Steve').must_equal true
+      store.tweets_by_user.key?('Joe').must_equal true
+    end
   end
 
   describe '#add' do

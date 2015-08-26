@@ -1,7 +1,11 @@
 class TweetStore
-  def initialize(follower_map)
-    @map = follower_map
+  def initialize(map)
+    @map = map
     @tweets_by_user = {}
+    @map.users.each do |user|
+      @tweets_by_user[user] = []
+    end
+
   end
 
   def add(tweet)

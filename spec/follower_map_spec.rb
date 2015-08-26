@@ -62,6 +62,27 @@ describe FollowerMap do
       map.followers_for('Rob').must_equal ['Steve']
       map.followers_for('Steve').must_equal ['Rob']
     end
+
+    it 'adds both broadcaster and subscriber to known users' do
+      map.add_follow(Follow.new('Rob', 'Zane'))
+
+      map.users.must_include 'Rob'
+      map.users.must_include 'Zane'
+    end
+  end
+
+  describe '#users' do
+    let (:follows) {
+      [
+        Follow.new('Rob', 'Steve'),
+        Follow.new('Steve', 'Rob'),
+        Follow.new('Zane', 'John')
+      ]
+    }
+    let (:map) { FollowerMap.from_list(follows) }
+    it 'returns all known users in alphabetical order' do
+      map.users.must_equal ['John', 'Rob', 'Steve', 'Zane']
+    end
   end
 
   describe '#broadcasters' do
