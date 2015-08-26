@@ -1,6 +1,7 @@
 require 'set'
 require_relative 'follow'
 
+class UserLineFormatError < StandardError; end
 class UserLine
   def initialize(line)
     @line = line
@@ -11,8 +12,9 @@ class UserLine
   end
 
   def follows
-    return {} unless valid?
+    raise UserLineFormatError.new(@line) unless valid?
 
+    # TODO: Deal with case issues around 'follows'
     subscriber, broadcasters = @line.split('follows').map(&:strip)
     broadcasters.split(',').map(&:strip).inject(Set.new) { |set, broadcaster|
       set.add Follow.new(broadcaster, subscriber)
@@ -22,6 +24,7 @@ class UserLine
   private
   # Assuming that every line in a valid file
   # has at least one user on the right hand
-  # side of follows
-  VALID_PATTERN = /.+ follows .+/i
+  # side of follows and that names can only contain
+  # \w characters.
+  VALID_PATTERN = /\w+ follows [\w, ]+/i
 end

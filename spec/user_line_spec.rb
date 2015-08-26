@@ -6,16 +6,26 @@ INVALID_LINES = ['Rob', '', 'Rob > John', 'follows John', 'Rob follows']
 
 describe UserLine do
   describe '#follows' do
-    it 'returns all users with their follower' do
-      UserLine.new(VALID_LINES.first).
-        follows.must_equal([Follow.new('John', 'Rob')])
+    describe 'with valid line' do
+      it 'returns all users with their follower' do
+        UserLine.new(VALID_LINES.first).
+          follows.must_equal([Follow.new('John', 'Rob')])
 
-      UserLine.new(VALID_LINES.last).
-        follows.must_equal([
-          Follow.new('John', 'Rob'),
-          Follow.new('Rich', 'Rob'),
-          Follow.new('Toby', 'Rob')
-        ])
+        UserLine.new(VALID_LINES.last).
+          follows.must_equal([
+            Follow.new('John', 'Rob'),
+            Follow.new('Rich', 'Rob'),
+            Follow.new('Toby', 'Rob')
+          ])
+      end
+    end
+
+    describe 'with invalid line' do
+      it 'raises a UserLineFormatError' do
+        proc {
+          UserLine.new(INVALID_LINES.first).follows
+        }.must_raise UserLineFormatError
+      end
     end
   end
 
